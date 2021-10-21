@@ -15,47 +15,37 @@ import "react-toastify/dist/ReactToastify.css";
 // ("rejected");
 
 export default function App() {
-  
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [images, setImages] = useState([]);
-  const [loader setLoader] = useState(false);
-  const [showModal setShowModal] = useState(false);
-  const [modalImg, setModalImg] = useState('');
+  const [loader, setLoader] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalImg, setModalImg] = useState("");
   const [error, setError] = useState(null);
 
-  // state = {
-  //   query: "",
-  //   page: 1,
-  //   images: [],
-  //   loader: false,
-  //   showModal: false,
-  //   modalImg: "",
-  //   error: null,
+  // componentDidUpdate(prevProps, prevState) {
+  //   const prevSearchQuery = prevState.query;
+  //   const nextSearchQuery = this.state.query;
+  //   if (prevSearchQuery !== nextSearchQuery) {
+  //     this.downloadImages();
+  //   }
+
+  //   if (prevState.page !== this.state.page && this.state.page !== 2) {
+  //     window.scrollTo({
+  //       top: document.documentElement.scrollHeight,
+  //       behavior: "smooth",
+  //     });
+  //   }
   // };
 
-  componentDidUpdate(prevProps, prevState) {
-    const prevSearchQuery = prevState.query;
-    const nextSearchQuery = this.state.query;
-    if (prevSearchQuery !== nextSearchQuery) {
-      this.downloadImages();
-    }
-
-    if (prevState.page !== this.state.page && this.state.page !== 2) {
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }
-
   const handleSubmit = (searchData) => {
-    this.setState({ query: searchData, page: 1 });
+    setQuery([searchData.query]);
+    setPage(searchData.page);
+    // this.setState({ query: searchData, page: 1 });
   };
 
-  downloadImages = (e) => {
-    const { query, page } = this.state;
-    this.toggleLoader();
+  const downloadImages = (e) => {
+    toggleLoader();
 
     fetchPictures(query, page)
       .then((response) => {
@@ -65,59 +55,62 @@ export default function App() {
             autoClose: 4000,
           });
         }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         return this.setState((prevState) => ({
           images: [...prevState.images, ...response],
           page: prevState.page + 1,
         }));
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       })
       .catch((error) => this.setState({ error }))
       .finally(() => this.toggleLoader());
   };
 
-  resetState = () => {
-    this.setState({
-      images: [],
-      page: 1,
-    });
+  const resetState = () => {
+    // this.setState({
+    //   images: [],
+    //   page: 1,
+    // });
+    setImages("");
+    setPage(1);
   };
 
-  handleChosenImg = (e) => {
+  const handleChosenImg = (e) => {
     e.preventDefault();
-    this.toggleModal();
-    this.setState({ modalImg: e.target.dataset.img });
+    toggleModal();
+    // this.setState({ modalImg: e.target.dataset.img });
+    setModalImg(e.target.dataset.img);
   };
 
-  toggleLoader = () => {
-    this.setState((prevState) => ({ loader: !prevState.loader }));
+  const toggleLoader = () => {
+    setLoader(!loader);
   };
 
-  toggleModal = () => {
-    this.setState((prevState) => ({ showModal: !prevState.showModal }));
+  const toggleModal = () => {
+    setShowModal(!showModal);
   };
 
-  
-    return (
-      <div className="App">
-        <SearchBar
-          query={query}
-          // handleChange={this.handleChangeQuery}
-          onSubmit={handleSubmit}
-          reset={resetState}
-        />
-        {!!images.length && (
-          <>
-            <ImageGallery images={images} onClick={handleChosenImg} />
-            <Button addImgs={downloadImages} btnName={"Load more"} />
-          </>
-        )}
-        {showModal && (
-          <Modal onCloseModal={toggleModal}>
-            <img src={modalImg} alt="" />
-          </Modal>
-        )}
-        {loader && <Loader />}
-        <ToastContainer position="top-right" autoClose={2500} theme="dark" />
-      </div>
-    );
-};
-
+  return (
+    <div className="App">
+      <SearchBar
+        query={query}
+        // handleChange={this.handleChangeQuery}
+        onSubmit={handleSubmit}
+        reset={resetState}
+      />
+      {!!images.length && (
+        <>
+          <ImageGallery images={images} onClick={handleChosenImg} />
+          <Button addImgs={downloadImages} btnName={"Load more"} />
+        </>
+      )}
+      {showModal && (
+        <Modal onCloseModal={toggleModal}>
+          <img src={modalImg} alt="" />
+        </Modal>
+      )}
+      {loader && <Loader />}
+      <ToastContainer position="top-right" autoClose={2500} theme="dark" />
+    </div>
+  );
+}
