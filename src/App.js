@@ -21,27 +21,27 @@ export default function App() {
   const [loader, setLoader] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalImg, setModalImg] = useState("");
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   const prevSearchQuery = prevState.query;
-  //   const nextSearchQuery = this.state.query;
-  //   if (prevSearchQuery !== nextSearchQuery) {
-  //     this.downloadImages();
-  //   }
+  useEffect(() => {
+    if (query === "") {
+      return;
+    }
+    downloadImages();
+  }, [query]);
 
-  //   if (prevState.page !== this.state.page && this.state.page !== 2) {
-  //     window.scrollTo({
-  //       top: document.documentElement.scrollHeight,
-  //       behavior: "smooth",
-  //     });
-  //   }
-  // };
+  useEffect(() => {
+    if (page !== 2) {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [page]);
 
   const handleSubmit = (searchData) => {
-    setQuery([searchData.query]);
-    setPage(searchData.page);
-    // this.setState({ query: searchData, page: 1 });
+    setQuery(searchData);
+    setPage(1);
   };
 
   const downloadImages = (e) => {
@@ -50,27 +50,19 @@ export default function App() {
     fetchPictures(query, page)
       .then((response) => {
         if (response.length === 0) {
-          return toast.error(`no results for ${this.state.query}`, {
+          return toast.error(`no results for ${query}`, {
             theme: "colored",
             autoClose: 4000,
           });
         }
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        return this.setState((prevState) => ({
-          images: [...prevState.images, ...response],
-          page: prevState.page + 1,
-        }));
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        setImages([...images, ...response]);
+        setPage(page + 1);
       })
       .catch((error) => this.setState({ error }))
-      .finally(() => this.toggleLoader());
+      .finally(() => toggleLoader());
   };
 
   const resetState = () => {
-    // this.setState({
-    //   images: [],
-    //   page: 1,
-    // });
     setImages("");
     setPage(1);
   };

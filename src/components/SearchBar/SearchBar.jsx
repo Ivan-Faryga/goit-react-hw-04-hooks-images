@@ -9,12 +9,12 @@ export default function SearchBar({ onSubmit, reset }) {
     // this.setState({
     //   [name]: value,
     // });
-    setQuery(e.currentTarget);
+    setQuery(e.currentTarget.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!this.state.query.trim())
+    if (!query.trim())
       return toast.warn("Please enter your request", {
         position: "top-right",
         autoClose: 2000,
@@ -27,7 +27,7 @@ export default function SearchBar({ onSubmit, reset }) {
       });
     onSubmit(query);
     setQuery("");
-    reset({ page: 1 });
+    reset();
   };
 
   return (
